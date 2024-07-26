@@ -39,3 +39,97 @@ export const getAllocationAndPrice = (
     price,
   };
 };
+
+export const getAllocationCount = (guestsCombination: Allocation[]) => {
+  let adultCount = 0;
+  let childCount = 0;
+  let priceCount = 0;
+  guestsCombination.forEach(({ adult, child, price }) => {
+    adultCount += adult ?? 0;
+    childCount += child ?? 0;
+    priceCount += price ?? 0;
+  });
+
+  return {
+    adultCount,
+    childCount,
+    priceCount,
+  };
+};
+
+export const getDefaultRoomAllocation = (
+  guests: Guests,
+  rooms: RoomConfig[]
+): Allocation[] => {
+  if (guests.adult === 0) {
+    return [{ ...guests, price: 0 }];
+  }
+
+  let guestCombination = [];
+
+  // 列舉所有 guests 的可能
+  for (let a = 1; a <= guests.adult; a += 1) {
+    guestCombination.push({ adult: a, child: 0 });
+    for (let c = 1; c <= guests.child; c += 1) {
+      guestCombination.push({ adult: a, child: c });
+    }
+  }
+
+  // convert guestCombination to allocation of each room and store result into map
+  const roomAllocationMap = new Map<number, Allocation[]>();
+  for (let roomIndex = 0; roomIndex < rooms.length; roomIndex += 1) {
+    const room = rooms[roomIndex];
+
+    if (!roomAllocationMap.has(roomIndex)) {
+      roomAllocationMap.set(roomIndex, []);
+    }
+
+    for (let i = 0; i < guestCombination.length; i += 1) {
+      const { adult, child } = guestCombination[i];
+      const totalPeople = adult + child;
+
+      if (totalPeople <= room.capacity) {
+        roomAllocationMap
+          .get(roomIndex)
+          ?.push(getAllocationAndPrice({ adult, child }, room));
+      }
+    }
+  }
+
+  let min: number = Infinity;
+  let minCostAllocation: Allocation[] = [];
+
+  // use dfs to find minimum cost allocation
+  const findMinCostAllocation = (
+    depth: number,
+    maxDepth: number,
+    comb: Allocation[]
+  ) => {
+    if (depth === maxDepth) {
+      const { adultCount, childCount, priceCount } = getAllocationCount(comb);
+
+      if (
+        adultCount === guests.adult &&
+        childCount === guests.child &&
+        priceCount < min
+      ) {
+        const copyComb = [...comb.map((item) => ({ ...item }))];
+
+        min = priceCount;
+        minCostAllocation = copyComb;
+      }
+      return;
+    }
+
+    const allocationArray = roomAllocationMap.get(depth) ?? [];
+    for (let a = 0; a <= allocationArray.length; a += 1) {
+      comb.push(allocationArray[a] ?? { adult: 0, child: 0, price: 0 });
+      findMinCostAllocation(depth + 1, maxDepth, comb);
+      comb.pop();
+    }
+  };
+
+  findMinCostAllocation(0, rooms.length, []);
+
+  return minCostAllocation;
+};

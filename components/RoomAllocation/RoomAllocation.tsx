@@ -12,6 +12,7 @@ import {
 } from '@/components/RoomAllocation/RoomAllocation.types';
 import {
   getAllocationAndPrice,
+  getDefaultRoomAllocation,
   getGuestsText,
 } from '@/components/RoomAllocation/RoomAllocation.utils';
 
@@ -37,15 +38,9 @@ interface RoomAllocationProps {
 }
 
 const RoomAllocation = ({ guests, rooms, onChange }: RoomAllocationProps) => {
-  // TODO: use getDefaultRoomAllocation function
   const defaultRoomAllocation = useMemo(
-    () =>
-      rooms.map(() => ({
-        [RoomPeopleType.ADULT]: 1,
-        [RoomPeopleType.CHILD]: 0,
-        price: 0,
-      })),
-    [rooms]
+    () => getDefaultRoomAllocation(guests, rooms),
+    [guests, rooms]
   );
 
   const [roomAllocation, setRoomAllocation] = useState<Allocation[]>(
@@ -68,7 +63,7 @@ const RoomAllocation = ({ guests, rooms, onChange }: RoomAllocationProps) => {
     return rooms.map((item, i) => [
       {
         name: RoomPeopleType.ADULT,
-        min: 1,
+        min: 0,
         max:
           restAllocationGuests[RoomPeopleType.ADULT] === 0
             ? roomAllocation[i][RoomPeopleType.ADULT]
