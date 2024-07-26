@@ -3,27 +3,34 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 
+import {
+  COLOR_BLUE_1,
+  COLOR_BLUE_2,
+  COLOR_BLUE_3,
+  COLOR_BLUE_1_OVERLAY_40,
+} from '@/constants/colors';
+
 export const ButtonBase = styled.button`
   font-size: 16px;
   width: 48px;
   height: 48px;
-  border: 1px solid rgb(30, 159, 210);
-  color: rgb(30, 159, 210);
+  border: 1px solid ${COLOR_BLUE_1};
+  color: ${COLOR_BLUE_1};
   background-color: transparent;
   border-radius: 4px;
   cursor: pointer;
 
   &:hover {
-    background-color: rgb(240, 253, 255);
+    background-color: ${COLOR_BLUE_3};
   }
 
   &:active {
-    background-color: rgb(199, 247, 255);
+    background-color: ${COLOR_BLUE_2};
   }
 
   &:disabled {
     cursor: not-allowed;
-    border-color: rgba(30, 159, 210, 0.5);
+    border-color: ${COLOR_BLUE_1_OVERLAY_40};
     &:hover {
       background-color: transparent;
     }
