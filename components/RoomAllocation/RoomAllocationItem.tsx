@@ -6,12 +6,19 @@ import styled from 'styled-components';
 import CustomInputNumber from '@/components/CustomInputNumber/CustomInputNumber';
 import { RoomPeopleType } from '@/components/RoomAllocation/RoomAllocation.enums';
 import { Guests } from '@/components/RoomAllocation/RoomAllocation.types';
+import { COLOR_GRAY_2 } from '@/constants/colors';
 
 const Wrapper = styled.div`
   width: 100%;
   display: flex;
   flex-flow: column;
   gap: 6px;
+
+  border-bottom: 1px solid ${COLOR_GRAY_2};
+  padding: 15px 0;
+  &: last-child {
+    border-bottom: 0;
+  }
 `;
 
 const Title = styled.span`
