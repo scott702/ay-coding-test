@@ -12,11 +12,13 @@ import {
 } from '@/components/RoomAllocation/RoomAllocation.types';
 import {
   getAllocationAndPrice,
+  getAllocationCount,
   getDefaultRoomAllocation,
   getGuestsText,
 } from '@/components/RoomAllocation/RoomAllocation.utils';
 
 import Notice from '@/components/Notice/Notice';
+import { COLOR_BLUE_1 } from '@/constants/colors';
 
 const Wrapper = styled.div`
   width: 100%;
@@ -29,6 +31,10 @@ const Wrapper = styled.div`
 const Title = styled.span`
   font-size: 24px;
   font-weight: bold;
+`;
+
+const Cost = styled.span`
+  color: ${COLOR_BLUE_1};
 `;
 
 interface RoomAllocationProps {
@@ -58,6 +64,11 @@ const RoomAllocation = ({ guests, rooms, onChange }: RoomAllocationProps) => {
 
     return result;
   }, [guests, roomAllocation]);
+
+  const currentCost = useMemo<number>(
+    () => getAllocationCount(roomAllocation).priceCount,
+    [roomAllocation]
+  );
 
   const roomsOptions = useMemo(() => {
     return rooms.map((item, i) => [
@@ -111,6 +122,7 @@ const RoomAllocation = ({ guests, rooms, onChange }: RoomAllocationProps) => {
       <Title>
         住客人數：{totalGuestsText} / {rooms.length}房
       </Title>
+      <Cost>目前金額：{currentCost} 元</Cost>
       {restPeopleNoticeText && (
         <Notice>尚未分配人數：{restPeopleNoticeText}</Notice>
       )}
