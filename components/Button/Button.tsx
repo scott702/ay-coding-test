@@ -10,10 +10,10 @@ import {
   COLOR_BLUE_1_OVERLAY_40,
 } from '@/constants/colors';
 
-export const ButtonBase = styled.button`
+export const ButtonBase = styled.button<{ width?: number; height?: number }>`
   font-size: 16px;
-  width: 48px;
-  height: 48px;
+  width: ${({ width }) => width ?? 48}px;
+  height: ${({ height }) => height ?? 48}px;
   border: 1px solid ${COLOR_BLUE_1};
   color: ${COLOR_BLUE_1};
   background-color: transparent;
