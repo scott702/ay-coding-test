@@ -79,6 +79,10 @@ const Button = ({ onHold, ...props }: ButtonProps): JSX.Element => {
       return;
     }
 
+    if (intervalRef.current || timeoutRef.current) {
+      return;
+    }
+
     timeoutRef.current = setTimeout(() => {
       intervalRef.current = setInterval(() => {
         onHold && onHold();
