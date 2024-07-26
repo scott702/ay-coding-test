@@ -62,7 +62,7 @@ export const getDefaultRoomAllocation = (
   rooms: RoomConfig[]
 ): Allocation[] => {
   if (guests.adult === 0) {
-    return [{ ...guests, price: 0 }];
+    return rooms.map(() => ({ adult: 0, child: 0, price: 0 }));
   }
 
   let guestCombination = [];

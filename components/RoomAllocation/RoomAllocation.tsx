@@ -70,6 +70,12 @@ const RoomAllocation = ({ guests, rooms, onChange }: RoomAllocationProps) => {
     [roomAllocation]
   );
 
+  const isNoAdult = useMemo<boolean>(
+    () =>
+      guests[RoomPeopleType.ADULT] === 0 && guests[RoomPeopleType.CHILD] > 0,
+    [guests]
+  );
+
   const roomsOptions = useMemo(() => {
     return rooms.map((item, i) => [
       {
@@ -81,7 +87,7 @@ const RoomAllocation = ({ guests, rooms, onChange }: RoomAllocationProps) => {
             : item.capacity,
         title: '大人',
         note: '年齡 20+',
-        disabled: false,
+        disabled: guests[RoomPeopleType.ADULT] === 0,
       },
       {
         name: RoomPeopleType.CHILD,
@@ -91,10 +97,10 @@ const RoomAllocation = ({ guests, rooms, onChange }: RoomAllocationProps) => {
             ? roomAllocation[i][RoomPeopleType.CHILD]
             : item.capacity,
         title: '小孩',
-        disabled: guests[RoomPeopleType.CHILD] === 0,
+        disabled: guests[RoomPeopleType.CHILD] === 0 || isNoAdult,
       },
     ]);
-  }, [guests, restAllocationGuests, roomAllocation, rooms]);
+  }, [guests, isNoAdult, restAllocationGuests, roomAllocation, rooms]);
 
   const restPeopleNoticeText = useMemo<string>(
     () => getGuestsText(restAllocationGuests),
@@ -126,6 +132,7 @@ const RoomAllocation = ({ guests, rooms, onChange }: RoomAllocationProps) => {
       {restPeopleNoticeText && (
         <Notice>尚未分配人數：{restPeopleNoticeText}</Notice>
       )}
+      {isNoAdult && <Notice>Must contain at least 1 adult.</Notice>}
       {roomAllocation.map(({ price, ...guests }, i) => (
         <RoomAllocationItem
           peopleCount={guests}
