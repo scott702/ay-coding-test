@@ -2,7 +2,7 @@
 
 import styled from 'styled-components';
 import Button from '@/components/Button/Button';
-import { useCallback, useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 import { COLOR_GRAY_1, COLOR_GRAY_2 } from '@/constants/colors';
 
 const Wrapper = styled.div`
@@ -53,24 +53,42 @@ const CustomInputNumber = ({
   disabled = false,
 }: CustomInputNumberProps): JSX.Element => {
   const [inputValue, setInputValue] = useState<number>(value);
+  const hiddenInputRef = useRef<HTMLInputElement | null>(null);
+
+  const handleInputEvents = useCallback(() => {
+    const event = new Event('input', { bubbles: true });
+
+    setTimeout(() => {
+      hiddenInputRef?.current?.dispatchEvent(event);
+    }, 0);
+  }, []);
 
   const handleIncrease = useCallback(() => {
     setInputValue((prev) => {
       const sum = prev + step;
       return sum > max ? max : sum;
     });
-  }, [step, max]);
+    handleInputEvents();
+  }, [handleInputEvents, step, max]);
 
   const handleDecrease = useCallback(() => {
     setInputValue((prev) => {
       const sum = prev - step;
       return sum < min ? min : sum;
     });
-  }, [step, min]);
+    handleInputEvents();
+  }, [handleInputEvents, step, min]);
 
   const handleInputChange = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
       setInputValue(Number(event.target.value));
+      onChange && onChange(event);
+    },
+    [onChange]
+  );
+
+  const handleClickButtonChange = useCallback(
+    (event: React.ChangeEvent<HTMLInputElement>) => {
       onChange && onChange(event);
     },
     [onChange]
@@ -99,6 +117,15 @@ const CustomInputNumber = ({
         onBlur={onBlur}
         disabled={disabled}
       />
+
+      {/* For clicking button to trigger InputEvent */}
+      <input
+        type="hidden"
+        name={name}
+        value={inputValue}
+        onInput={handleClickButtonChange}
+        ref={hiddenInputRef}
+      ></input>
 
       <Button
         onClick={handleIncrease}
