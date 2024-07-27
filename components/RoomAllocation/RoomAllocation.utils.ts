@@ -133,3 +133,13 @@ export const getDefaultRoomAllocation = (
 
   return minCostAllocation;
 };
+
+export const getRoomMaximum = (
+  restGuests: number,
+  currentSelectedGuests: number
+) => {
+  return restGuests === 0
+    ? // disable increase button when max be assigned to current value
+      currentSelectedGuests
+    : currentSelectedGuests + restGuests;
+};

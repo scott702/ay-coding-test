@@ -80,12 +80,29 @@ const CustomInputNumber = ({
     handleInputEvents();
   }, [handleInputEvents, step, min]);
 
+  const handleInputValidation = useCallback(
+    (value: number) => {
+      if (value > max) {
+        return max;
+      }
+
+      if (value < min || typeof value !== 'number' || isNaN(value)) {
+        return min;
+      }
+
+      return value;
+    },
+    [max, min]
+  );
+
   const handleInputChange = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
-      setInputValue(Number(event.target.value));
+      const validatedValue = handleInputValidation(Number(event.target.value));
+      setInputValue(validatedValue);
+      event.target.value = String(validatedValue);
       onChange && onChange(event);
     },
-    [onChange]
+    [onChange, handleInputValidation]
   );
 
   const handleClickButtonChange = useCallback(

@@ -61,4 +61,52 @@ describe('test CustomInputNumber', () => {
       expect(fakeOnChange).toHaveBeenCalled();
     });
   });
+
+  describe('test input validation', () => {
+    it('should assign maximum value if value of input is out of maximum', async () => {
+      const INPUT_NAME = 'test';
+      const MAX_INPUT = 4;
+      const MIN_INPUT = 1;
+
+      const user = userEvent.setup();
+      const wrapper = render(
+        <CustomInputNumber
+          value={2}
+          max={MAX_INPUT}
+          min={MIN_INPUT}
+          name={INPUT_NAME}
+        ></CustomInputNumber>
+      );
+      const input = wrapper.getByTestId('custom-input') as HTMLInputElement;
+
+      user.type(input, '{3}');
+
+      await waitFor(() => {
+        expect(input.value).toEqual(String(MAX_INPUT));
+      });
+    });
+
+    it('should assign minimum value if value of input is out of minimum', async () => {
+      const INPUT_NAME = 'test';
+      const MAX_INPUT = 4;
+      const MIN_INPUT = 2;
+
+      const user = userEvent.setup();
+      const wrapper = render(
+        <CustomInputNumber
+          value={2}
+          max={MAX_INPUT}
+          min={MIN_INPUT}
+          name={INPUT_NAME}
+        ></CustomInputNumber>
+      );
+      const input = wrapper.getByTestId('custom-input') as HTMLInputElement;
+
+      user.clear(input);
+
+      await waitFor(() => {
+        expect(input.value).toEqual(String(MIN_INPUT));
+      });
+    });
+  });
 });
