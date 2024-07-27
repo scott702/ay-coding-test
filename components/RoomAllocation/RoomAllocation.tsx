@@ -15,6 +15,7 @@ import {
   getAllocationCount,
   getDefaultRoomAllocation,
   getGuestsText,
+  getRoomMaximum,
 } from '@/components/RoomAllocation/RoomAllocation.utils';
 
 import Notice from '@/components/Notice/Notice';
@@ -77,14 +78,15 @@ const RoomAllocation = ({ guests, rooms, onChange }: RoomAllocationProps) => {
   );
 
   const roomsOptions = useMemo(() => {
-    return rooms.map((item, i) => [
+    return roomAllocation.map((allocation, i) => [
       {
         name: RoomPeopleType.ADULT,
-        min: 0,
-        max:
-          restAllocationGuests[RoomPeopleType.ADULT] === 0
-            ? roomAllocation[i][RoomPeopleType.ADULT]
-            : item.capacity,
+        // must contain ONE adult if room contain child
+        min: allocation[RoomPeopleType.CHILD] > 0 ? 1 : 0,
+        max: getRoomMaximum(
+          restAllocationGuests[RoomPeopleType.ADULT],
+          allocation[RoomPeopleType.ADULT]
+        ),
         title: '大人',
         note: '年齡 20+',
         disabled: guests[RoomPeopleType.ADULT] === 0,
@@ -92,15 +94,15 @@ const RoomAllocation = ({ guests, rooms, onChange }: RoomAllocationProps) => {
       {
         name: RoomPeopleType.CHILD,
         min: 0,
-        max:
-          restAllocationGuests[RoomPeopleType.CHILD] === 0
-            ? roomAllocation[i][RoomPeopleType.CHILD]
-            : item.capacity,
+        max: getRoomMaximum(
+          restAllocationGuests[RoomPeopleType.CHILD],
+          allocation[RoomPeopleType.CHILD]
+        ),
         title: '小孩',
         disabled: guests[RoomPeopleType.CHILD] === 0 || isNoAdult,
       },
     ]);
-  }, [guests, isNoAdult, restAllocationGuests, roomAllocation, rooms]);
+  }, [guests, isNoAdult, restAllocationGuests, roomAllocation]);
 
   const restPeopleNoticeText = useMemo<string>(
     () => getGuestsText(restAllocationGuests),

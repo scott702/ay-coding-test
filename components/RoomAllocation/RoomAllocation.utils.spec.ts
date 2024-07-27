@@ -4,6 +4,7 @@ import {
   getAllocationAndPrice,
   getAllocationCount,
   getDefaultRoomAllocation,
+  getRoomMaximum,
 } from '@/components/RoomAllocation/RoomAllocation.utils';
 
 describe('test RoomAllocation utils', () => {
@@ -103,6 +104,24 @@ describe('test RoomAllocation utils', () => {
         { adult: 0, child: 0, price: 0 },
         { adult: 0, child: 0, price: 0 },
       ]);
+    });
+  });
+
+  describe('test getRoomMaximum', () => {
+    it('should return current guests if the rest guests is 0', () => {
+      const REST = 0;
+      const CURRENT_SELECT = 1;
+
+      expect(getRoomMaximum(REST, CURRENT_SELECT)).toEqual(CURRENT_SELECT);
+    });
+
+    it('should return current guests plus rest guest if the rest guests is not 0', () => {
+      const REST = 2;
+      const CURRENT_SELECT = 1;
+
+      expect(getRoomMaximum(REST, CURRENT_SELECT)).toEqual(
+        CURRENT_SELECT + REST
+      );
     });
   });
 });
