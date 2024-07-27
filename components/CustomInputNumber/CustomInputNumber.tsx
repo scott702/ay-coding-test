@@ -1,5 +1,6 @@
 'use client';
 
+import React from 'react';
 import styled from 'styled-components';
 import Button from '@/components/Button/Button';
 import { useCallback, useRef, useState } from 'react';
@@ -102,6 +103,7 @@ const CustomInputNumber = ({
         onBlur={onBlur}
         disabled={disabled || inputValue <= min}
         name={name}
+        data-testid="decrease-button"
       >
         {' '}
         -{' '}
@@ -116,6 +118,7 @@ const CustomInputNumber = ({
         onChange={handleInputChange}
         onBlur={onBlur}
         disabled={disabled}
+        data-testid="custom-input"
       />
 
       {/* For clicking button to trigger InputEvent */}
@@ -133,6 +136,7 @@ const CustomInputNumber = ({
         onBlur={onBlur}
         disabled={disabled || inputValue >= max}
         name={name}
+        data-testid="increase-button"
       >
         {' '}
         +{' '}
